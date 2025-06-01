@@ -20,6 +20,11 @@ Aplicação web moderna e responsiva para visualizar, cadastrar, editar e exclui
 
 ---
 
+## Demonstração em vídeo
+
+[![Demonstração do Projeto](https://img.youtube.com/vi/6pt5MhNFA1s/0.jpg)](https://www.youtube.com/watch?v=6pt5MhNFA1s)
+
+---
 ## Funcionalidades
 
 - Listagem paginada e pesquisável de Pokémons  
@@ -143,6 +148,7 @@ A aplicação estará disponível em `http://localhost:5173` (ou outra porta liv
 
 ## Licença
 
-Este projeto está licenciado sob a Licença MIT. Consulte o arquivo LICENSE para mais informações.
+Este projeto está licenciado sob a Licença MIT.  
+Consulte o arquivo [LICENSE](./LICENSE) para mais informações.
 
 ---
