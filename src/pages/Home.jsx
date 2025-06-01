@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 
@@ -7,13 +5,18 @@ import Header from '../components/Header';
 import PokemonSearch from '../components/PokemonSearch';
 import PokemonListItem from '../components/PokemonListItem';
 import PokemonDetail from '../components/PokemonDetail';
+import { typeColors, capitalize } from '../utils/typeUtils';
+import { Select, SelectItem } from '@/components/ui/select';
 
 export default function Home() {
   const [pokemons, setPokemons] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const [selectedType, setSelectedType] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const allPokemonTypes = ['all', ...Object.keys(typeColors)];
 
   useEffect(() => {
     async function fetchPokemons() {
@@ -22,26 +25,23 @@ export default function Home() {
         setError(null);
         const response = await api.get('/pokemons');
 
-        // *** Mapeamento DOS DADOS DA API para o formato esperado pelos componentes ***
         const mappedPokemons = response.data.map((poke) => {
           return {
-            id: poke.id, // Mantém o ID original
-            codigo: poke.codigo, // Mapeia 'codigo' da API para 'codigo'
-            nome: poke.nome, // Mapeia 'nome' da API para 'nome'
-            gif: poke.gif || poke.imagem || poke.sprite || '/placeholder.svg', // Mapeia 'gif'
-            tipoPrincipal: poke.tipoPrincipal, // Passa o objeto tipoPrincipal
-            tipoSecundario: poke.tipoSecundario, // Passa o objeto tipoSecundario
+            id: poke.id,
+            codigo: poke.codigo,
+            nome: poke.nome,
+            gif: poke.gif || poke.imagem || poke.sprite || '/placeholder.svg',
+            tipoPrincipal: poke.tipoPrincipal,
+            tipoSecundario: poke.tipoSecundario,
             hp: poke.hp,
             attack: poke.attack,
             defense: poke.defense,
             description: poke.descricao || poke.description,
-            // Adiciona outras propriedades necessárias
           };
         });
-        // *******************************************************************
 
         setPokemons(mappedPokemons);
-        // Define o primeiro Pokémon como selecionado, se existir
+        // Define o primeiro Pokémon como selecionado ao carregar a lista
         if (mappedPokemons.length > 0) {
           setSelectedPokemon(mappedPokemons[0]);
         }
@@ -57,15 +57,29 @@ export default function Home() {
     fetchPokemons();
   }, []);
 
+  // Lógica de filtragem dos Pokémons
   const filteredPokemon = pokemons.filter(
     (pokemon) =>
       pokemon &&
-      pokemon.nome && // Verifica se pokemon.nome existe
-      pokemon.nome.toLowerCase().includes(searchTerm.toLowerCase()),
+      pokemon.nome &&
+      pokemon.nome.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (selectedType === 'all' ||
+        (pokemon.tipoPrincipal &&
+          pokemon.tipoPrincipal.nome &&
+          pokemon.tipoPrincipal.nome.toLowerCase() ===
+            selectedType.toLowerCase()) ||
+        (pokemon.tipoSecundario &&
+          pokemon.tipoSecundario.nome &&
+          pokemon.tipoSecundario.nome.toLowerCase() ===
+            selectedType.toLowerCase())),
   );
 
   const handlePokemonClick = (pokemon) => {
     setSelectedPokemon(pokemon);
+  };
+
+  const handleTypeChange = (event) => {
+    setSelectedType(event.target.value);
   };
 
   return (
@@ -83,11 +97,27 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border-8 border-gray-800">
             <Header totalEntries={pokemons.length} />{' '}
-            {/* Componente de busca */}
-            <PokemonSearch
-              searchTerm={searchTerm}
-              onSearchTermChange={setSearchTerm}
-            />
+            {/* Container para busca e combobox */}
+            <div className="bg-gray-100 p-6 border-b-4 border-gray-300 flex flex-col items-center md:flex-row md:justify-center gap-4 flex-wrap">
+              <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
+                <div className="flex-grow max-w-md">
+                  {' '}
+                  <PokemonSearch
+                    searchTerm={searchTerm}
+                    onSearchTermChange={setSearchTerm}
+                  />
+                </div>
+                <div className="flex-shrink-0 w-auto min-w-[180px]">
+                  <Select value={selectedType} onChange={handleTypeChange}>
+                    {allPokemonTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {capitalize(type === 'all' ? 'Todos os Tipos' : type)}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                </div>
+              </div>
+            </div>
             <div className="grid lg:grid-cols-3 gap-0">
               <div className="lg:col-span-2 bg-gray-50 p-6 max-h-[600px] overflow-y-auto">
                 <div className="grid md:grid-cols-2 gap-4">
