@@ -1,15 +1,15 @@
 
 # Pokémon Frontend App
 
-[![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)](https://reactjs.org/) 
-[![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/) 
-[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/) 
-[![Axios](https://img.shields.io/badge/Axios-5A29E4?style=flat)](https://axios-http.com/) 
-[![React Router](https://img.shields.io/badge/React%20Router-CA4245?style=flat&logo=react-router&logoColor=white)](https://reactrouter.com/) 
-[![PropTypes](https://img.shields.io/badge/PropTypes-FF69B4?style=flat)](https://reactjs.org/docs/typechecking-with-proptypes.html) 
-[![Lucide React](https://img.shields.io/badge/Lucide-0A0A0A?style=flat&logo=lucide&logoColor=white)](https://lucide.dev/) 
-[![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=flat&logo=eslint&logoColor=white)](https://eslint.org/) 
-[![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=flat&logo=prettier&logoColor=white)](https://prettier.io/)
+[![React](https://img.shields.io/badge/React-18.x-20232A?style=flat&logo=react&logoColor=61DAFB)](https://reactjs.org/) 
+[![Vite](https://img.shields.io/badge/Vite-4.x-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/) 
+[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.x-06B6D4?style=flat&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/) 
+[![Axios](https://img.shields.io/badge/Axios-1.x-5A29E4?style=flat)](https://axios-http.com/) 
+[![React Router](https://img.shields.io/badge/React%20Router-6.x-CA4245?style=flat&logo=react-router&logoColor=white)](https://reactrouter.com/) 
+[![PropTypes](https://img.shields.io/badge/PropTypes-15.x-FF69B4?style=flat)](https://reactjs.org/docs/typechecking-with-proptypes.html) 
+[![Lucide React](https://img.shields.io/badge/Lucide-0.292.0-0A0A0A?style=flat&logo=lucide&logoColor=white)](https://lucide.dev/) 
+[![ESLint](https://img.shields.io/badge/ESLint-8.x-4B32C3?style=flat&logo=eslint&logoColor=white)](https://eslint.org/) 
+[![Prettier](https://img.shields.io/badge/Prettier-3.x-F7B93E?style=flat&logo=prettier&logoColor=white)](https://prettier.io/)
 
 
 ---
