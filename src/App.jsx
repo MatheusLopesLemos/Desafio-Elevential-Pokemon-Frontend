@@ -1,15 +1,16 @@
-import { Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
-import CadastroPokemon from './pages/CadastroPokemon';
-import CadastroTipo from './pages/CadastroTipo';
+import RegisterPokemon from './pages/RegisterPokemon';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/cadastro-pokemon" element={<CadastroPokemon />} />
-      <Route path="/cadastro-tipo" element={<CadastroTipo />} />
-    </Routes>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/register" element={<RegisterPokemon />} />
+      </Routes>
+    </Router>
   );
 }
 

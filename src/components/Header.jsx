@@ -15,7 +15,7 @@ function Header({ totalEntries }) {
           </div>
         </div>
         <div className="text-white font-mono text-sm">
-          ENTRIES: {totalEntries}
+          Total de Pokemons: {totalEntries}
         </div>
       </div>
     </div>

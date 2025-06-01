@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
+import { Link } from 'react-router-dom';
 
 import Header from '../components/Header';
 import PokemonSearch from '../components/PokemonSearch';
 import PokemonListItem from '../components/PokemonListItem';
 import PokemonDetail from '../components/PokemonDetail';
+import Spinner from '../components/Spinner';
 import { typeColors, capitalize } from '../utils/typeUtils';
 import { Select, SelectItem } from '@/components/ui/select';
 
@@ -41,7 +43,6 @@ export default function Home() {
         });
 
         setPokemons(mappedPokemons);
-        // Define o primeiro Pokémon como selecionado ao carregar a lista
         if (mappedPokemons.length > 0) {
           setSelectedPokemon(mappedPokemons[0]);
         }
@@ -57,7 +58,6 @@ export default function Home() {
     fetchPokemons();
   }, []);
 
-  // Lógica de filtragem dos Pokémons
   const filteredPokemon = pokemons.filter(
     (pokemon) =>
       pokemon &&
@@ -97,11 +97,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border-8 border-gray-800">
             <Header totalEntries={pokemons.length} />{' '}
-            {/* Container para busca e combobox */}
-            <div className="bg-gray-100 p-6 border-b-4 border-gray-300 flex flex-col items-center md:flex-row md:justify-center gap-4 flex-wrap">
-              <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
+            <div className="bg-gray-100 p-6 border-b-4 border-gray-300 flex flex-col md:flex-row md:justify-between md:items-center gap-4 flex-wrap">
+              <div className="flex flex-col sm:flex-row items-center gap-4 flex-grow justify-center md:justify-start">
                 <div className="flex-grow max-w-md">
-                  {' '}
                   <PokemonSearch
                     searchTerm={searchTerm}
                     onSearchTermChange={setSearchTerm}
@@ -117,14 +115,32 @@ export default function Home() {
                   </Select>
                 </div>
               </div>
-            </div>
+
+              <div className="w-full md:w-auto flex justify-center md:justify-end">
+                <Link
+                  to="/register"
+                  className="bg-gray-800 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-base transition-colors shadow-md flex items-center whitespace-nowrap"
+                >
+                  <span role="img" aria-label="plus" className="mr-2 text-lg">
+                    ➕
+                  </span>{' '}
+                  Cadastrar
+                </Link>
+              </div>
+            </div>{' '}
+            {/* Fim do container de busca, filtro e botão */}
             <div className="grid lg:grid-cols-3 gap-0">
               <div className="lg:col-span-2 bg-gray-50 p-6 max-h-[600px] overflow-y-auto">
                 <div className="grid md:grid-cols-2 gap-4">
                   {loading ? (
-                    <p className="text-center text-gray-600 md:col-span-2">
-                      Carregando Pokémons...
-                    </p>
+                    <div className="md:col-span-2 flex flex-col items-center justify-center py-8">
+                      {' '}
+                      {/* Container para centralizar ambos */}
+                      <p className="text-center text-gray-600 mb-4 text-lg">
+                        Carregando Pokémons...
+                      </p>
+                      <Spinner />
+                    </div>
                   ) : error ? (
                     <p className="text-center text-red-500 md:col-span-2">
                       {error}
