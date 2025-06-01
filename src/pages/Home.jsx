@@ -1,3 +1,4 @@
+// src/pages/Home.jsx
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { Link } from 'react-router-dom';
@@ -7,7 +8,7 @@ import PokemonSearch from '../components/PokemonSearch';
 import PokemonListItem from '../components/PokemonListItem';
 import PokemonDetail from '../components/PokemonDetail';
 import Spinner from '../components/Spinner';
-import { typeColors, capitalize } from '../utils/typeUtils';
+import { capitalize } from '../utils/typeUtils';
 import { Select, SelectItem } from '@/components/ui/select';
 
 export default function Home() {
@@ -15,11 +16,13 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [selectedType, setSelectedType] = useState('all');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Para carregar Pokémons
   const [error, setError] = useState(null);
 
-  const allPokemonTypes = ['all', ...Object.keys(typeColors)];
+  const [apiPokemonTypes, setApiPokemonTypes] = useState([]);
+  const [loadingTypes, setLoadingTypes] = useState(true);
 
+  // Efeito para buscar todos os Pokémons
   useEffect(() => {
     async function fetchPokemons() {
       try {
@@ -58,6 +61,28 @@ export default function Home() {
     fetchPokemons();
   }, []);
 
+  useEffect(() => {
+    async function fetchPokemonTypes() {
+      try {
+        setLoadingTypes(true);
+        const response = await api.get('/tipos');
+        const types = response.data.map((type) => type.nome.toLowerCase());
+        setApiPokemonTypes(types);
+      } catch (err) {
+        console.error('Erro ao buscar tipos de Pokémon para filtro:', err);
+      } finally {
+        setLoadingTypes(false);
+      }
+    }
+    fetchPokemonTypes();
+  }, []);
+
+  // A lista de tipos para o Select de filtro, agora incluindo os tipos da API
+  const allFilterTypes = [
+    'all', // Opção "Todos os Tipos"
+    ...apiPokemonTypes, // Adiciona os tipos buscados da API
+  ];
+
   const filteredPokemon = pokemons.filter(
     (pokemon) =>
       pokemon &&
@@ -78,8 +103,8 @@ export default function Home() {
     setSelectedPokemon(pokemon);
   };
 
-  const handleTypeChange = (event) => {
-    setSelectedType(event.target.value);
+  const handleTypeChange = (value) => {
+    setSelectedType(value);
   };
 
   return (
@@ -89,14 +114,11 @@ export default function Home() {
           <h1 className="text-6xl font-bold text-white mb-2 drop-shadow-lg">
             POKÉDEX
           </h1>
-          <p className="text-red-100 text-lg">
-            Digital Encyclopedia of Pokémon
-          </p>
         </div>
 
         <div className="max-w-7xl mx-auto">
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border-8 border-gray-800">
-            <Header totalEntries={pokemons.length} />{' '}
+            <Header totalEntries={pokemons.length} />
             <div className="bg-gray-100 p-6 border-b-4 border-gray-300 flex flex-col md:flex-row md:justify-between md:items-center gap-4 flex-wrap">
               <div className="flex flex-col sm:flex-row items-center gap-4 flex-grow justify-center md:justify-start">
                 <div className="flex-grow max-w-md">
@@ -106,36 +128,50 @@ export default function Home() {
                   />
                 </div>
                 <div className="flex-shrink-0 w-auto min-w-[180px]">
-                  <Select value={selectedType} onChange={handleTypeChange}>
-                    {allPokemonTypes.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {capitalize(type === 'all' ? 'Todos os Tipos' : type)}
-                      </SelectItem>
-                    ))}
-                  </Select>
+                  {loadingTypes ? (
+                    <p className="text-gray-500 text-sm">Carregando tipos...</p>
+                  ) : (
+                    <Select
+                      value={selectedType}
+                      onValueChange={handleTypeChange}
+                    >
+                      {allFilterTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {capitalize(type === 'all' ? 'Todos os Tipos' : type)}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  )}
                 </div>
               </div>
 
-              <div className="w-full md:w-auto flex justify-center md:justify-end">
+              <div className="w-full md:w-auto flex justify-center md:justify-end gap-2 flex-wrap">
                 <Link
-                  to="/register"
+                  to="/register-pokemon"
                   className="bg-gray-800 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-base transition-colors shadow-md flex items-center whitespace-nowrap"
                 >
                   <span role="img" aria-label="plus" className="mr-2 text-lg">
                     ➕
                   </span>{' '}
-                  Cadastrar
+                  Cadastrar Pokémon
+                </Link>
+                <Link
+                  to="/register-type"
+                  className="bg-gray-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-base transition-colors shadow-md flex items-center whitespace-nowrap"
+                >
+                  <span role="img" aria-label="plus" className="mr-2 text-lg">
+                    ➕
+                  </span>{' '}
+                  Editar Tipo
                 </Link>
               </div>
             </div>{' '}
-            {/* Fim do container de busca, filtro e botão */}
+            {/* Fim do container de busca, filtro e botões */}
             <div className="grid lg:grid-cols-3 gap-0">
               <div className="lg:col-span-2 bg-gray-50 p-6 max-h-[600px] overflow-y-auto">
                 <div className="grid md:grid-cols-2 gap-4">
                   {loading ? (
                     <div className="md:col-span-2 flex flex-col items-center justify-center py-8">
-                      {' '}
-                      {/* Container para centralizar ambos */}
                       <p className="text-center text-gray-600 mb-4 text-lg">
                         Carregando Pokémons...
                       </p>
