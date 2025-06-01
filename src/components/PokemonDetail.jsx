@@ -1,16 +1,12 @@
-// src/components/PokemonDetail.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Badge } from '@/components/ui/badge';
 import { getTipoColor, getTipoIcon, capitalize } from '../utils/typeUtils';
-// useNavigate não será estritamente necessário para recarregar a página inteira
-// mas pode ser útil para outras navegações futuras, então vamos manter por enquanto.
-import {} from 'react-router-dom';
-import { api } from '../services/api'; // Import your API instance
+import { Link } from 'react-router-dom';
+
+import { api } from '../services/api';
 
 function PokemonDetail({ pokemon }) {
-  // const navigate = useNavigate(); // Mantendo o navigate, embora não seja usado para reload
-
   if (!pokemon) {
     return (
       <div className="lg:col-span-1 bg-gray-900 text-white p-6 flex items-center justify-center h-full">
@@ -26,37 +22,34 @@ function PokemonDetail({ pokemon }) {
     ? getTipoIcon(pokemon.tipoSecundario.nome)
     : null;
 
-  // --- Função para Excluir Pokémon ---
   const handleDeletePokemon = async () => {
-    // Adiciona uma confirmação simples do navegador
     const confirmDelete = window.confirm(
       `Tem certeza que deseja excluir o Pokémon "${capitalize(pokemon.nome)}" (Código: ${pokemon.codigo})?\nEsta ação é irreversível.`,
     );
 
     if (!confirmDelete) {
-      return; // Se o usuário cancelar, não faz nada
+      return;
     }
 
     try {
-      // Chama o endpoint DELETE do backend com o CODIGO do Pokémon
       await api.delete(`/pokemons/${pokemon.codigo}`);
 
       alert(
         `Pokémon "${capitalize(pokemon.nome)}" (Código: ${pokemon.codigo}) excluído com sucesso!`,
-      ); // Feedback de sucesso
+      );
 
-      // === AQUI ESTÁ A MUDANÇA PRINCIPAL: Recarregar a página inteira ===
       window.location.reload();
     } catch (err) {
-      console.error('Erro ao excluir Pokémon:', err);
-      // Extrai a mensagem de erro do backend, se disponível
+      console.error(
+        'Erro ao excluir Pokémon:',
+        err.response?.data || err.message || err,
+      );
       const errorMessage =
         err.response?.data?.message ||
         'Ocorreu um erro ao tentar excluir o Pokémon.';
-      alert(`Falha ao excluir Pokémon: ${errorMessage}`); // Feedback de erro para o usuário
+      alert(`Falha ao excluir Pokémon: ${errorMessage}`);
     }
   };
-  // --- Fim da Função de Exclusão ---
 
   return (
     <div className="lg:col-span-1 bg-gray-900 text-white p-6 max-h-[600px] overflow-y-auto">
@@ -139,12 +132,15 @@ function PokemonDetail({ pokemon }) {
           </span>{' '}
           <span className="ml-2">Excluir</span>
         </button>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors cursor-pointer">
+        <Link
+          to={`/edit-pokemon/${pokemon.codigo}`}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors cursor-pointer flex items-center justify-center"
+        >
           <span role="img" aria-label="lápis">
             ✏️
           </span>{' '}
           <span className="ml-2">Editar</span>
-        </button>
+        </Link>
       </div>
     </div>
   );
@@ -152,7 +148,7 @@ function PokemonDetail({ pokemon }) {
 
 PokemonDetail.propTypes = {
   pokemon: PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
     codigo: PropTypes.number.isRequired,
     nome: PropTypes.string.isRequired,
     gif: PropTypes.string,

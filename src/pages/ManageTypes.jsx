@@ -2,16 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
-import { capitalize } from '../utils/typeUtils'; // Para capitalizar os nomes dos tipos
-import Spinner from '../components/Spinner'; // Reutilizando o spinner
+import { capitalize } from '../utils/typeUtils';
+import Spinner from '../components/Spinner';
 
 export default function ManageTypes() {
-  const [typeName, setTypeName] = useState(''); // Estado para o nome do tipo no input
-  const [types, setTypes] = useState([]); // Lista de todos os tipos
-  const [editingType, setEditingType] = useState(null); // Tipo atualmente em edição (objeto { codigo, nome })
+  const [typeName, setTypeName] = useState('');
+  const [types, setTypes] = useState([]);
+  const [editingType, setEditingType] = useState(null);
 
-  const [loading, setLoading] = useState(false); // Para operações de formulário (salvar/deletar)
-  const [loadingTypes, setLoadingTypes] = useState(true); // Para carregar a lista de tipos
+  const [loading, setLoading] = useState(false);
+  const [loadingTypes, setLoadingTypes] = useState(true);
 
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
@@ -21,7 +21,7 @@ export default function ManageTypes() {
     try {
       setLoadingTypes(true);
       const response = await api.get('/tipos');
-      // Garante que os tipos são ordenados pelo nome para melhor visualização
+      // Garante que os tipos são ordenados pelo nome
       const sortedTypes = response.data.sort((a, b) =>
         a.nome.localeCompare(b.nome),
       );
@@ -52,7 +52,6 @@ export default function ManageTypes() {
 
     try {
       if (editingType) {
-        // Modo de Edição
         const dataToSend = { nome: typeName };
         // Endpoint PUT: /tipos/:codigo
         await api.put(`/tipos/${editingType.codigo}`, dataToSend);
@@ -104,7 +103,7 @@ export default function ManageTypes() {
       return;
     }
 
-    setLoading(true); // Pode adicionar um estado de loading específico para exclusão se quiser
+    setLoading(true);
     setMessage('');
     setIsSuccess(false);
 
@@ -124,7 +123,6 @@ export default function ManageTypes() {
       await fetchTypes();
     } catch (err) {
       console.error('Erro ao excluir tipo:', err);
-      // Erro comum: tipo em uso por um Pokémon
       setMessage(
         `Erro ao excluir tipo: ${err.response?.data?.message || err.message || 'Não foi possível excluir. Verifique se há Pokémons associados a este tipo.'}`,
       );

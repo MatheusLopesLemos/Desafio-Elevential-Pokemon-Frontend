@@ -1,7 +1,7 @@
 // src/pages/Home.jsx
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'; // <--- Importante: Adicionado useLocation
 
 import Header from '../components/Header';
 import PokemonSearch from '../components/PokemonSearch';
@@ -9,26 +9,35 @@ import PokemonListItem from '../components/PokemonListItem';
 import PokemonDetail from '../components/PokemonDetail';
 import Spinner from '../components/Spinner';
 import { capitalize } from '../utils/typeUtils';
-import { Select, SelectItem } from '@/components/ui/select';
+import { Select, SelectItem } from '../components/ui/Select';
 
 export default function Home() {
   const [pokemons, setPokemons] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [selectedType, setSelectedType] = useState('all');
-  const [loading, setLoading] = useState(true); // Para carregar Pokémons
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [apiPokemonTypes, setApiPokemonTypes] = useState([]);
   const [loadingTypes, setLoadingTypes] = useState(true);
 
-  // Efeito para buscar todos os Pokémons
+  const location = useLocation(); // <--- Importante: Hook para acessar o objeto de localização
+
+  // Buscar todos os Pokémons
   useEffect(() => {
     async function fetchPokemons() {
       try {
         setLoading(true);
         setError(null);
         const response = await api.get('/pokemons');
+
+        // Log para depuração: verifique o tamanho do array vindo da API
+        console.log(
+          'API Response (raw data length):',
+          response.data.length,
+          response.data,
+        );
 
         const mappedPokemons = response.data.map((poke) => {
           return {
@@ -46,8 +55,11 @@ export default function Home() {
         });
 
         setPokemons(mappedPokemons);
+        // Seleciona o primeiro Pokémon da lista se houver
         if (mappedPokemons.length > 0) {
           setSelectedPokemon(mappedPokemons[0]);
+        } else {
+          setSelectedPokemon(null); // Limpa a seleção se não houver Pokémons
         }
       } catch (err) {
         console.error('Erro ao buscar pokémons:', err);
@@ -59,8 +71,9 @@ export default function Home() {
       }
     }
     fetchPokemons();
-  }, []);
+  }, [location.pathname]); // <--- Importante: O useEffect agora depende de location.pathname
 
+  // Efeito para buscar os tipos de Pokémon para o filtro
   useEffect(() => {
     async function fetchPokemonTypes() {
       try {
@@ -75,14 +88,12 @@ export default function Home() {
       }
     }
     fetchPokemonTypes();
-  }, []);
+  }, []); // Este useEffect permanece com dependência vazia
 
-  // A lista de tipos para o Select de filtro, agora incluindo os tipos da API
-  const allFilterTypes = [
-    'all', // Opção "Todos os Tipos"
-    ...apiPokemonTypes, // Adiciona os tipos buscados da API
-  ];
+  // A lista de tipos para o Select de filtro, incluindo a opção "Todos os Tipos"
+  const allFilterTypes = ['all', ...apiPokemonTypes];
 
+  // Lógica de filtragem
   const filteredPokemon = pokemons.filter(
     (pokemon) =>
       pokemon &&
@@ -99,6 +110,9 @@ export default function Home() {
             selectedType.toLowerCase())),
   );
 
+  // Log para depuração: verifique o tamanho do array após o filtro
+  console.log('Filtered Pokemons length:', filteredPokemon.length);
+
   const handlePokemonClick = (pokemon) => {
     setSelectedPokemon(pokemon);
   };
@@ -112,7 +126,8 @@ export default function Home() {
       <div className="container mx-auto p-4">
         <div className="max-w-7xl mx-auto">
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border-8 border-gray-800">
-            <Header totalEntries={pokemons.length} />
+            {/* Passa filteredPokemon.length para o Header */}
+            <Header totalEntries={filteredPokemon.length} />
             <div className="bg-gray-100 p-6 border-b-4 border-gray-300 flex flex-col md:flex-row md:justify-between md:items-center gap-4 flex-wrap">
               <div className="flex flex-col sm:flex-row items-center gap-4 flex-grow justify-center md:justify-start">
                 <div className="flex-grow max-w-md">
@@ -156,7 +171,7 @@ export default function Home() {
                   <span role="img" aria-label="plus" className="mr-2 text-lg">
                     ➕
                   </span>{' '}
-                  Editar Tipo
+                  Gerenciar Tipos
                 </Link>
               </div>
             </div>{' '}

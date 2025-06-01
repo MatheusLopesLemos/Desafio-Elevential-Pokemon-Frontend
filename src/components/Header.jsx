@@ -1,4 +1,3 @@
-// src/components/PokedexHeader.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -15,7 +14,7 @@ function Header({ totalEntries }) {
           </div>
         </div>
         <div className="text-white font-mono text-sm">
-          Total de Pokemons: {totalEntries}
+          Total de Pokemons: {totalEntries === 0 ? 0 : totalEntries}
         </div>
       </div>
     </div>

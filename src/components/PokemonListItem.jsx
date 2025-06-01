@@ -79,8 +79,8 @@ PokemonListItem.propTypes = {
       nome: PropTypes.string.isRequired,
     }),
   }).isRequired,
-  isSelected: PropTypes.bool.isRequired, // Propriedade para seleção visual
-  onClick: PropTypes.func.isRequired, // Função de clique
+  isSelected: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
 export default PokemonListItem;

@@ -47,7 +47,6 @@ export default function RegisterPokemon() {
     const { name, value } = e.target;
     setPokemonData((prevData) => ({
       ...prevData,
-      // Se value for "", mantenha como string, senão converta para String() para consistência
       [name]: value === '' ? '' : String(value),
     }));
   };
@@ -61,14 +60,11 @@ export default function RegisterPokemon() {
     try {
       const dataToSend = {
         nome: pokemonData.nome,
-        // Converte para Number APENAS no envio para a API
-        tipoPrincipalCodigo: Number(pokemonData.tipoPrincipalCodigo),
+        tipoPrincipalId: Number(pokemonData.tipoPrincipalCodigo),
       };
 
       if (pokemonData.tipoSecundarioCodigo) {
-        dataToSend.tipoSecundarioCodigo = Number(
-          pokemonData.tipoSecundarioCodigo,
-        );
+        dataToSend.tipoSecundarioId = Number(pokemonData.tipoSecundarioCodigo);
       }
 
       await api.post('/pokemons', dataToSend);
@@ -88,7 +84,7 @@ export default function RegisterPokemon() {
     } catch (err) {
       console.error('Erro ao cadastrar Pokémon:', err);
       setMessage(
-        `Erro ao cadastrar Pokémon: ${err.response?.data?.message || err.message || 'Verifique sua conexão e o backend.'}`,
+        `Erro ao cadastrar Pokémon: ${err.response?.data?.errors?.fieldErrors?.tipoPrincipalId?.[0] || err.response?.data?.message || err.message || 'Verifique sua conexão e o backend.'}`,
       );
       setIsSuccess(false);
     } finally {
@@ -152,7 +148,7 @@ export default function RegisterPokemon() {
                 value={pokemonData.tipoPrincipalCodigo}
                 onChange={handleNativeSelectChange}
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 p-2 text-gray-800" // Adicionado estilo básico
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 p-2 text-gray-800"
               >
                 <option value="" disabled>
                   Selecione um tipo principal
